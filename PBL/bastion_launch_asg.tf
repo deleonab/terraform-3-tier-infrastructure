@@ -87,7 +87,7 @@ resource "aws_launch_template" "nginx-launch-template" {
   user_data = filebase64("${path.module}/nginx.sh")
 }
 
-# ------ Autoscslaling group for reverse proxy nginx ---------
+# ------ Autoscaling group for reverse proxy nginx ---------
 
 resource "aws_autoscaling_group" "nginx-asg" {
   name                      = "nginx-asg"
