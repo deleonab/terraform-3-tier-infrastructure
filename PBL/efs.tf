@@ -1,6 +1,6 @@
 # create key from key management system
 resource "aws_kms_key" "ACS-kms" {
-  description = "KMS key "
+  description = "KMS key"
   policy      = <<EOF
   {
   "Version": "2012-10-17",
@@ -9,7 +9,11 @@ resource "aws_kms_key" "ACS-kms" {
     {
       "Sid": "Enable IAM User Permissions",
       "Effect": "Allow",
-      "Principal": { "AWS": "arn:aws:iam::${var.account_no}:user/segun" },
+      "Principal": { "AWS": [
+      "arn:aws:iam::${var.account_no}:root",
+      "arn:aws:iam::${var.account_no}:user/ECRAdministrator"
+      ]
+      },
       "Action": "kms:*",
       "Resource": "*"
     }
@@ -18,9 +22,10 @@ resource "aws_kms_key" "ACS-kms" {
 EOF
 }
 
+# "Principal": { "AWS": "arn:aws:iam::${var.account_no}:user/deleaws" },
 # create key alias
 resource "aws_kms_alias" "alias" {
-  name          = "alias/kms"
+  name          = "alias/kmsnew"
   target_key_id = aws_kms_key.ACS-kms.key_id
 }
 
@@ -35,7 +40,7 @@ resource "aws_efs_file_system" "ACS-efs" {
 
 # set first mount target for the EFS 
 resource "aws_efs_mount_target" "subnet-1" {
-  file_system_id  = aws_efs_file_system.ACS-efs.idh
+  file_system_id  = aws_efs_file_system.ACS-efs.id
   subnet_id       = aws_subnet.private[2].id
   security_groups = [aws_security_group.datalayer-sg.id]
 }
